@@ -10,6 +10,7 @@ npm i -D eslint
 ./node_modules/.bin/eslint --init
 npm i -D husky
 npm i -D commitizen cz-conventional-changelog standard-version
+npm i --D @commitlint/{config-conventional,cli}
 ```
 
 
