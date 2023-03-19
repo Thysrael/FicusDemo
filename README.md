@@ -1,24 +1,22 @@
 # demo
 
 ## Project setup
-```
-npm install
+```shell
+vue create demo
+cd demo
+vue add electron-builder
+
+npm i -D eslint
+./node_modules/.bin/eslint --init
+npm i -D husky
+npm i -D commitizen cz-conventional-changelog standard-version
 ```
 
-### Compiles and hot-reloads for development
+
+
+格式化代码
+
 ```
-npm run serve
+"eslint": "eslint src/**"
 ```
 
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
