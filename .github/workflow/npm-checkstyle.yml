@@ -9,6 +9,7 @@ on:
       feature/*
       dev
       main
+  workflow_dispatch:
 
 jobs:
   checkstyle:
