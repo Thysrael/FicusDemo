@@ -9,6 +9,7 @@ on:
       feature/*
       dev
       main
+  workflow_dispatch:
 
 jobs:
   checkstyle:
@@ -18,5 +19,6 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 15
+          cache: 'npm'
       - run: npm i eslint
       - run: node_modules/eslint/bin/eslint.js .
