@@ -170,3 +170,10 @@ module.exports = {
 
 ![image-20230320002338789](README/image-20230320002338789.png)
 
+## 项目结构说明
+
+- common: 共享文件夹，目前其下为数据类
+
+- renderer: 渲染进程相关文件
+
+- markdown: markdown渲染相关文件
