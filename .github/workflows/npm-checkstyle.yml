@@ -3,13 +3,7 @@
 
 name: eslint_checkstyle
 
-on:
-  push:
-    branches:
-      feature/*
-      dev
-      main
-  workflow_dispatch:
+on: [push, workflow_dispatch]
 
 jobs:
   checkstyle:
