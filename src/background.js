@@ -1,6 +1,6 @@
 'use strict'
 
-import { app, protocol, BrowserWindow } from 'electron'
+import { app, protocol, BrowserWindow, ipcMain } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
 const isDevelopment = process.env.NODE_ENV !== 'production'
@@ -78,3 +78,60 @@ if (isDevelopment) {
     })
   }
 }
+
+ipcMain.on('ficus::create-window', (event) => {
+  createWindow()
+})
+
+async function getFileFromUser (browserWindow) {
+
+}
+
+async function saveMarkdown (browserWindow, filePath, content) {
+
+}
+
+// 打开 markdown 文件
+ipcMain.on('ficus::open-file', async (event) => {
+  try {
+    const file = await getFileFromUser(
+      BrowserWindow.fromWebContents(event.sender)
+    )
+    if (file) {
+      event.reply('file-opened', file.path, file.content)
+    }
+  } catch (e) {
+    console.error(e)
+  }
+})
+
+// 读取 markdown 文件
+// note 必须包含有效的 filePath
+ipcMain.on('read-file', async (event, note) => {
+  try {
+    const file = await getFileFromUser(
+      BrowserWindow.fromWebContents(event.sender),
+      note.filePath
+    )
+    event.reply('file-read', note.id, file && file.content)
+  } catch (e) {
+    console.error(e)
+  }
+})
+
+// 保存 markdown 文件
+ipcMain.on('save-markdown', async (event, note) => {
+  try {
+    const filePath = await saveMarkdown(
+      BrowserWindow.fromWebContents(event.sender),
+      note.filePath,
+      note.content
+    )
+
+    if (filePath) {
+      event.reply('file-saved', note.id, filePath)
+    }
+  } catch (e) {
+    console.error(e)
+  }
+})
