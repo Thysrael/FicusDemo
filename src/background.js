@@ -1,8 +1,10 @@
 'use strict'
 
-import { app, protocol, BrowserWindow, ipcMain } from 'electron'
+import { app, protocol, BrowserWindow, ipcMain, dialog } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
+import * as fs from 'fs'
+
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 // Scheme must be registered before the app is ready
@@ -84,11 +86,36 @@ ipcMain.on('ficus::create-window', (event) => {
 })
 
 async function getFileFromUser (browserWindow) {
+  // files is an array of file path.
+  const files = dialog.showOpenDialog(BrowserWindow, {
+    properties: ['openFile'],
+    filters: [
+      { name: 'Text Files', extensions: ['txt'] },
+      { name: 'Markdown Files', extensions: ['md', 'markdown'] }
+    ]
+  })
+  if (!files) {
+    return null
+  }
 
+  const file = files[0]
+  const content = fs.readFileSync(file).toString()
+
+  console.log(content)
+  return file
 }
 
 async function saveMarkdown (browserWindow, filePath, content) {
+  const files = dialog.showOpenDialog(BrowserWindow, {
+    properties: ['openFile']
+  })
+  if (!files) {
+    return false
+  }
 
+  const file = files[0]
+  fs.writeFileSync(file, content)
+  return true
 }
 
 // 打开 markdown 文件
