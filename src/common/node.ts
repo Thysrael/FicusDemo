@@ -1,6 +1,6 @@
 import { mark2html } from "@/markdown/mark"
 
-class Note {
+export class Note {
     readonly id: string // ID
     readonly created: number // 创建时间的时间戳
 
