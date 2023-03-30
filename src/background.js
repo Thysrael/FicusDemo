@@ -1,8 +1,10 @@
 'use strict'
 
-import { app, protocol, BrowserWindow } from 'electron'
+import { app, protocol, BrowserWindow, ipcMain, dialog } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
+import * as fs from 'fs'
+
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 // Scheme must be registered before the app is ready
@@ -78,3 +80,85 @@ if (isDevelopment) {
     })
   }
 }
+
+ipcMain.on('ficus::create-window', (event) => {
+  createWindow()
+})
+
+async function getFileFromUser (browserWindow) {
+  // files is an array of file path.
+  const files = dialog.showOpenDialog(BrowserWindow, {
+    properties: ['openFile'],
+    filters: [
+      { name: 'Text Files', extensions: ['txt'] },
+      { name: 'Markdown Files', extensions: ['md', 'markdown'] }
+    ]
+  })
+  if (!files) {
+    return null
+  }
+
+  const file = files[0]
+  const content = fs.readFileSync(file).toString()
+
+  console.log(content)
+  return file
+}
+
+async function saveMarkdown (browserWindow, filePath, content) {
+  const files = dialog.showOpenDialog(BrowserWindow, {
+    properties: ['openFile']
+  })
+  if (!files) {
+    return false
+  }
+
+  const file = files[0]
+  fs.writeFileSync(file, content)
+  return true
+}
+
+// 打开 markdown 文件
+ipcMain.on('ficus::open-file', async (event) => {
+  try {
+    const file = await getFileFromUser(
+      BrowserWindow.fromWebContents(event.sender)
+    )
+    if (file) {
+      event.reply('file-opened', file.path, file.content)
+    }
+  } catch (e) {
+    console.error(e)
+  }
+})
+
+// 读取 markdown 文件
+// note 必须包含有效的 filePath
+ipcMain.on('read-file', async (event, note) => {
+  try {
+    const file = await getFileFromUser(
+      BrowserWindow.fromWebContents(event.sender),
+      note.filePath
+    )
+    event.reply('file-read', note.id, file && file.content)
+  } catch (e) {
+    console.error(e)
+  }
+})
+
+// 保存 markdown 文件
+ipcMain.on('save-markdown', async (event, note) => {
+  try {
+    const filePath = await saveMarkdown(
+      BrowserWindow.fromWebContents(event.sender),
+      note.filePath,
+      note.content
+    )
+
+    if (filePath) {
+      event.reply('file-saved', note.id, filePath)
+    }
+  } catch (e) {
+    console.error(e)
+  }
+})
