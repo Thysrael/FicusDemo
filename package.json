@@ -15,7 +15,10 @@
   },
   "main": "background.js",
   "dependencies": {
+    "@types/marked": "^4.0.8",
     "core-js": "^3.8.3",
+    "marked": "^4.3.0",
+    "node-polyfill-webpack-plugin": "^2.0.1",
     "vue": "^3.2.13"
   },
   "devDependencies": {
