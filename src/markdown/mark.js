@@ -23,6 +23,7 @@ const md = new MarkdownIt({
 md.use(require('markdown-it-emoji'))
 md.use(require('markdown-it-attrs'))
 md.use(require('markdown-it-lazy-headers'))
+md.use(require('./myPlugin'))
 
 export function mark2html (content) {
   return md.render(content)
